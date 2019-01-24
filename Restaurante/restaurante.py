@@ -70,6 +70,9 @@ class Hola:
         self.lblTotal = b.get_object("lblTotal")
         self.lblError = b.get_object("lblError")
 
+        #Administracion
+        self.listFacturas = b.get_object("listFacturas")
+
         dic = {'on_PriWin_destroy': self.salir,
                'on_notebook_switch_page': self.verificarCambio,
                'on_btnMesa1_clicked': self.abrirFactura,
@@ -90,6 +93,7 @@ class Hola:
         b.connect_signals(dic)
         self.gbFactura.hide()
         self.cargarServicios()
+        self.cargarFacturas()
         self.venprincipal.show()
 
     def cargarServicios(self):
@@ -152,6 +156,13 @@ class Hola:
         for i in municipios:
             self.listMunicipios.append(i)
 
+    def cargarFacturas(self):
+        self.listFacturas.clear()
+        self.curRestaurante.execute("select * from Facturas")
+        facturas = self.curRestaurante.fetchall()
+        for i in facturas:
+            self.listFacturas.append(i)
+
     def anhadirComanda(self, widget):
         b = False
 
@@ -160,7 +171,6 @@ class Hola:
         id = tm.get_value(ti, 0)
         precio = float([tm.get_value(ti, 2)[0:-1]][0])
         self.lblTotal.set_text("%.2f" % (float(self.lblTotal.get_text())+precio))
-
 
         for i in range(len(self.listComandas)):
             if id == self.listComandas[i][0]:
@@ -190,8 +200,9 @@ class Hola:
                 if self.cmbProvincia.get_active() != -1:
                     if self.cmbCiudad.get_active() != -1:
                         self.altaCliente()
-
                         self.altaFactura()
+                        self.notebook.set_current_page(0)
+                        self.gbFactura.hide()
 
                         self.lblError.set_text("")
                         self.lblTotal.set_text("0")
@@ -223,6 +234,7 @@ class Hola:
 
         self.curRestaurante.execute("insert into facturas (dni, idCamarero, idMesa, fecha) values (?, ?, ?, ?)", lista)
         self.conexPissione.commit()
+        self.cargarFacturas()
 
 
     def validoDNI(self, dni):
