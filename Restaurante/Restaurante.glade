@@ -90,7 +90,7 @@
   <object class="GtkListStore" id="listClientes">
     <columns>
       <!-- column-name DNI -->
-      <column type="gint"/>
+      <column type="gchararray"/>
       <!-- column-name nombre -->
       <column type="gchararray"/>
       <!-- column-name apellidos -->

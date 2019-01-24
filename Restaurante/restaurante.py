@@ -72,6 +72,7 @@ class Hola:
 
         #Administracion
         self.listFacturas = b.get_object("listFacturas")
+        self.listClientes = b.get_object("listClientes")
 
         dic = {'on_PriWin_destroy': self.salir,
                'on_notebook_switch_page': self.verificarCambio,
@@ -94,6 +95,7 @@ class Hola:
         self.gbFactura.hide()
         self.cargarServicios()
         self.cargarFacturas()
+        self.cargarClientes()
         self.venprincipal.show()
 
     def cargarServicios(self):
@@ -162,6 +164,13 @@ class Hola:
         facturas = self.curRestaurante.fetchall()
         for i in facturas:
             self.listFacturas.append(i)
+
+    def cargarClientes(self):
+        self.listClientes.clear()
+        self.curRestaurante.execute("select * from Clientes")
+        clientes = self.curRestaurante.fetchall()
+        for i in clientes:
+            self.listClientes.append(i)
 
     def anhadirComanda(self, widget):
         b = False
