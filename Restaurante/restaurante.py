@@ -204,8 +204,8 @@ class Hola:
     def imprimir(self, widget):
         b = False
 
-        if self.etDni.get_text()!="":
-            if self.etNombre.get_text()!="":
+        if self.etDni.get_text() != "":
+            if self.etNombre.get_text() != "":
                 if self.cmbProvincia.get_active() != -1:
                     if self.cmbCiudad.get_active() != -1:
                         self.altaCliente()

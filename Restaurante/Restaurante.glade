@@ -7,6 +7,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">Imagenes/mesa1.png</property>
   </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">Imagenes/insert.png</property>
+  </object>
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -159,6 +164,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Pissione</property>
     <property name="resizable">False</property>
+    <property name="hide_titlebar_when_maximized">True</property>
     <child>
       <placeholder/>
     </child>
@@ -328,6 +334,7 @@
           <object class="GtkNotebook" id="notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="resize_mode">queue</property>
             <signal name="switch-page" handler="on_notebook_switch_page" swapped="no"/>
             <child>
               <object class="GtkFixed" id="fixedMesas">
@@ -469,15 +476,18 @@
               <object class="GtkBox" id="gbFactura">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="resize_mode">queue</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="resize_mode">immediate</property>
                     <child>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="resize_mode">immediate</property>
                         <property name="row_homogeneous">True</property>
                         <property name="column_homogeneous">True</property>
                         <child>
@@ -574,6 +584,7 @@
                         <property name="margin_right">70</property>
                         <property name="margin_top">15</property>
                         <property name="margin_bottom">15</property>
+                        <property name="resize_mode">immediate</property>
                         <property name="row_spacing">30</property>
                         <property name="column_spacing">1</property>
                         <property name="column_homogeneous">True</property>
@@ -689,6 +700,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="no_show_all">True</property>
+                            <property name="resize_mode">immediate</property>
                             <property name="model">listMunicipios</property>
                             <property name="wrap_width">4</property>
                             <child>
@@ -762,6 +774,7 @@
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">False</property>
+                        <property name="resize_mode">queue</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkScrolledWindow">
@@ -776,6 +789,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="halign">center</property>
+                                <property name="resize_mode">queue</property>
                                 <property name="model">listComandas</property>
                                 <property name="search_column">0</property>
                                 <child internal-child="selection">
@@ -845,6 +859,7 @@
                             <property name="can_focus">False</property>
                             <property name="margin_left">9</property>
                             <property name="margin_right">1</property>
+                            <property name="resize_mode">immediate</property>
                             <property name="column_spacing">4</property>
                             <child>
                               <object class="GtkLabel">
@@ -904,7 +919,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="hexpand">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -928,7 +942,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="hexpand">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">5</property>
@@ -994,6 +1007,7 @@
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">False</property>
+                        <property name="resize_mode">queue</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkScrolledWindow">
@@ -1399,9 +1413,11 @@
                         <property name="hexpand">False</property>
                         <property name="spacing">8</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkButton">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="image">image10</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
