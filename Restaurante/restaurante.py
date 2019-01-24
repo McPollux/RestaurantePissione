@@ -187,11 +187,15 @@ class Hola:
 
         if self.etDni.get_text()!="":
             if self.etNombre.get_text()!="":
-                if self.cmbProvincia.get_active()!=-1:
-                    if self.cmbCiudad.get_active()!=-1:
+                if self.cmbProvincia.get_active() != -1:
+                    if self.cmbCiudad.get_active() != -1:
                         self.altaCliente()
-                        self.lblError.set_text("")
 
+                        self.altaFactura()
+
+                        self.lblError.set_text("")
+                        self.lblTotal.set_text("0")
+                        self.listComandas.clear()
                     else:
                         self.lblError.set_text("El campo de ciudad no puede estar vacio")
                 else:
@@ -202,7 +206,6 @@ class Hola:
             self.lblError.set_text("El campo de DNI no puede estar vacio")
 
     def altaCliente(self):
-        print("samba")
         tree_prov = self.cmbProvincia.get_active_iter()
         tree_local = self.cmbCiudad.get_active_iter()
         model = self.cmbProvincia.get_model()
@@ -212,6 +215,13 @@ class Hola:
 
         lista = (self.etDni.get_text(), self.etNombre.get_text(), self.etApellidos.get_text(), self.etDireccion.get_text(), prov, localidad)
         self.curRestaurante.execute("insert into clientes values (?, ?, ?, ?, ?, ?)", lista)
+        self.conexPissione.commit()
+
+    def altaFactura(self):
+
+        lista = (self.etDni.get_text(), 1, int(self.lblMesa.get_text()), datetime.datetime.now())
+
+        self.curRestaurante.execute("insert into facturas (dni, idCamarero, idMesa, fecha) values (?, ?, ?, ?)", lista)
         self.conexPissione.commit()
 
 
@@ -230,7 +240,7 @@ class Hola:
                 dni = dni[:8]  # el número que son los 8 primeros
                 if dni[0] in dig_ext:  # comprueba que es extranjero
                     dni = dni.replace(dni[0], reemp_dig_ext[dni[0]])
-                    return len(dni) == len([n for n in dni if n in numeros]) and tabla[int(dni)% 23] == dig_control
+                    return len(dni) == len([n for n in dni if n in numeros]) and tabla[int(dni) % 23] == dig_control
                     # devuelve true si se dan las 2 condiciones o si no false
                 else:
                     return tabla[int(dni) % 23] == dig_control
