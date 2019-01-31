@@ -143,14 +143,13 @@ class Hola:
     def cargarDatos(self, posicion):
         self.treeComandas.set_model(self.listas[posicion])
         self.treeComandas.show()
-        if self.mesas[posicion].dni is not None:
-            self.etDni.set_text(self.mesas[posicion].dni)
-            self.etNombre.set_text(self.mesas[posicion].nombre)
-            self.etApellidos.set_text(self.mesas[posicion].apellidos)
-            self.etDireccion.set_text(self.mesas[posicion].direccion)
-            self.cmbProvincia.set_active(self.mesas[posicion].provincia)
-            self.cmbCiudad.set_active(self.mesas[posicion].ciudad)
-            self.lblTotal.set_text(str(self.mesas[posicion].total))
+        self.etDni.set_text(self.mesas[posicion].dni)
+        self.etNombre.set_text(self.mesas[posicion].nombre)
+        self.etApellidos.set_text(self.mesas[posicion].apellidos)
+        self.etDireccion.set_text(self.mesas[posicion].direccion)
+        self.cmbProvincia.set_active(self.mesas[posicion].provincia)
+        self.cmbCiudad.set_active(self.mesas[posicion].ciudad)
+        self.lblTotal.set_text(str(self.mesas[posicion].total))
 
     def guardarDatos(self):
         posicion = int(self.lblMesa.get_text())
