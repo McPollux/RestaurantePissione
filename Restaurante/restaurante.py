@@ -10,7 +10,7 @@ import sqlite3
 
 class Mesas:
 
-    def __init__(self, dni="", nombre="", apellidos="", direccion="", provincia=-1, ciudad=-1, listComandas=None,
+    def __init__(self, dni="", nombre="", apellidos="", direccion="", provincia=-1, ciudad=-1,
                  total=0):
         self.dni = dni
         self.nombre = nombre
@@ -18,7 +18,6 @@ class Mesas:
         self.direccion = direccion
         self.provincia = provincia
         self.ciudad = ciudad
-        self.listComandas = listComandas
         self.total = total
 
 
