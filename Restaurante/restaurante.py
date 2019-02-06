@@ -94,10 +94,24 @@ class Hola:
         self.treeSelServicios = b.get_object("treeSelServicios")
         self.lblTotal = b.get_object("lblTotal")
         self.lblError = b.get_object("lblError")
+        self.booleanCliente = False
 
         # Administracion
+        self.treeFacturas = b.get_object("treeFacturas")
+        self.treeLineasFactura = b.get_object("treeLineasFactura")
+        self.listLineasFactura = b.get_object("listLineasFactura")
+
         self.listFacturas = b.get_object("listFacturas")
         self.listClientes = b.get_object("listClientes")
+        self.listCamareros = b.get_object("listCamareros")
+        self.listMesas = b.get_object("listMesas")
+
+        self.etIdFactura = b.get_object("etIdFactura")
+        self.cmbMesas = b.get_object("cmbMesas")
+        self.etDni2 = b.get_object("etDni2")
+        self.etFecha = b.get_object("etFecha")
+        self.cmbCamareros = b.get_object("cmbCamareros")
+        self.cbCompletado = b.get_object("cbCompletado")
 
         dic = {'on_PriWin_destroy': self.salir,
                'on_notebook_switch_page': self.verificarCambio,
@@ -109,14 +123,15 @@ class Hola:
                'on_btnMesa6_clicked': self.abrirFactura,
                'on_btnMesa7_clicked': self.abrirFactura,
                'on_btnMesa8_clicked': self.abrirFactura,
+               'on_etDni_focus_out_event': self.buscarCliente,
                'on_cmbProvincia_changed': self.cargarMunicipios,
                'on_btnAnhadir_clicked': self.anhadirComanda,
                'on_btnEliminarComanda_clicked': self.eliminarComanda,
                'on_btnImprimir_clicked': self.imprimir,
                'on_treeSelClientes_changed': self.visualizarCliente,
-               'on_treeSelFacturas_changed': self.visualizarFactura,
+               'on_treeSelFacturas_changed': self.visualizarComandas,
                'on_treeSelServicio_changed': self.visualizarServicio,
-               'on_btnSalir_clicked': self.salir,
+               'on_mbSalir_activate': self.salir,
                }
 
         b.connect_signals(dic)
@@ -124,7 +139,15 @@ class Hola:
         self.cargarServicios()
         self.cargarFacturas()
         self.cargarClientes()
+        self.cargarCamareros()
+        self.cargarMesas()
         self.venprincipal.show()
+
+    def verificarCambio(self, widget, redundancia, paginaPosterior):
+        if paginaPosterior == 1 and self.lblMesa.get_text() == "NULL":
+            self.gbFactura.hide()
+        if self.notebook.get_current_page() == 1:
+            self.guardarDatos()
 
     def cargarServicios(self):
         self.curRestaurante.execute("select * from Servicios")
@@ -134,11 +157,20 @@ class Hola:
             i = (i[0], i[1], str("%.2f" % i[2]) + "€")
             self.listSelServicios.append(i)
 
-    def verificarCambio(self, widget, redundancia, paginaPosterior):
-        if paginaPosterior == 1 and self.lblMesa.get_text() == "NULL":
-            self.gbFactura.hide()
-        if self.notebook.get_current_page() == 1:
-            self.guardarDatos()
+    def cargarCamareros(self):
+        self.curRestaurante.execute("select idCamarero from Camareros")
+        lista = self.curRestaurante.fetchall()
+        self.listCamareros.clear()
+        for i in lista:
+            self.listCamareros.append(i)
+
+    def cargarMesas(self):
+        self.curRestaurante.execute("select idMesa from Mesas")
+        lista = self.curRestaurante.fetchall()
+        self.listMesas.clear()
+        for i in lista:
+            self.listMesas.append(i)
+
 
     def cargarDatos(self, posicion):
         self.treeComandas.set_model(self.listas[posicion])
@@ -200,6 +232,33 @@ class Hola:
 
         self.notebook.set_current_page(1)
 
+    def buscarCliente(self, widget, data=None):
+        self.booleanCliente = False
+        self.curRestaurante.execute("select * from Clientes")
+        clientes = self.curRestaurante.fetchall()
+        for i in clientes:
+            if self.etDni.get_text() == i[0]:
+                self.etNombre.set_text(i[1])
+                self.etApellidos.set_text(i[2])
+                self.etDireccion.set_text(i[3])
+                self.cmbProvincia.set_active(self.idProvincia(i[4]))
+                self.cmbCiudad.set_active(self.idCiudad(i[5]))
+                self.booleanCliente = True
+
+    def idProvincia(self, nombre):
+        self.curReverb.execute("select id, provincia from provincias")
+        provincias = self.curReverb.fetchall()
+        for i in provincias:
+            if i[1] == nombre:
+                return int(i[0] -1)
+
+    def idCiudad(self, nombre):
+        cont = 0
+        for i in self.listMunicipios:
+            if i[0] == nombre:
+                return cont
+            cont += 1
+
     def cargarProvincias(self):
 
         try:
@@ -214,7 +273,7 @@ class Hola:
     def cargarMunicipios(self, widget):
         self.listMunicipios.clear()
         self.curReverb.execute(
-            "select municipio from municipios where provincia_id = " + str(self.cmbProvincia.get_active() + 1))
+            "select municipio from municipios where provincia_id = " + str(self.cmbProvincia.get_active() + 1) + "")
         municipios = self.curReverb.fetchall()
         for i in municipios:
             self.listMunicipios.append(i)
@@ -258,21 +317,24 @@ class Hola:
 
         seleccion = self.treeComandas.get_selection()
         (tm, ti) = seleccion.get_selected()
-        precioComanda = float([tm.get_value(ti, 3)[0:-1]][0])
-        self.lblTotal.set_text("%.2f" % (float(self.lblTotal.get_text()) - precioComanda))
-        tm.remove(ti)
+        if ti is not None:
+            precioComanda = float([tm.get_value(ti, 3)[0:-1]][0])
+            self.lblTotal.set_text("%.2f" % (float(self.lblTotal.get_text()) - precioComanda))
+            tm.remove(ti)
 
     def imprimir(self, widget):
-
+        self.lblError.set_text("")
         if self.etDni.get_text() != "":
             if self.etNombre.get_text() != "":
                 if self.cmbProvincia.get_active() != -1:
                     if self.cmbCiudad.get_active() != -1:
-                        self.altaCliente()
+                        if not self.booleanCliente:
+                            self.altaCliente()
+
                         self.altaFactura()
+                        self.vaciarFactura()
                         self.notebook.set_current_page(0)
                         self.gbFactura.hide()
-
                     else:
                         self.lblError.set_text("El campo de ciudad no puede estar vacio")
                 else:
@@ -311,7 +373,7 @@ class Hola:
         self.curRestaurante.execute("select max(idFactura) from facturas")
         id = self.curRestaurante.fetchall()
 
-        for i in self.listComandas:
+        for i in self.treeComandas.get_model():
             self.curRestaurante.execute("insert into lineasFactura (idFactura, idServicio, cantidad) values (?, ?, ?)",
                                         (id[0][0], i[0], i[2]))
 
@@ -319,7 +381,7 @@ class Hola:
 
         self.lblError.set_text("")
         self.lblTotal.set_text("0")
-        self.listComandas.clear()
+        self.treeComandas.get_model().clear()
 
     def vaciarFactura(self):
         self.etDni.set_text("")
@@ -351,9 +413,7 @@ class Hola:
             return False
 
         except:
-
             print("Error en la aplicación")
-
             return None
 
     def visualizarCliente(self, widget):  # Metodo que se lanza al clicar en una tupla de la tabla clientes
@@ -368,19 +428,22 @@ class Hola:
         # self.entmovil.set_text(tm.get_value(ti, 5))
         # self.entfecha.set_text(tm.get_value(ti, 6))
 
-    def visualizarFactura(self, widget):  # Metodo que se lanza al clicar en una tupla de la tabla clientes
-        hola = 0
-        # self.a = self.treeclientes.get_selection()
-        # (tm, ti) = self.a.get_selected()
-        # self.entdni.set_text(tm.get_value(ti, 0))
-        # self.entmatricula.set_text(tm.get_value(ti, 1))
-        # self.entapellidos.set_text(tm.get_value(ti, 2))
-        # self.entnombre.set_text(tm.get_value(ti, 3))
-        # self.entemail.set_text(tm.get_value(ti, 4))
-        # self.entmovil.set_text(tm.get_value(ti, 5))
-        # self.entfecha.set_text(tm.get_value(ti, 6))
+    def visualizarComandas(self, widget):  # Metodo que se lanza al clicar en una tupla de la tabla facturas
+        self.listLineasFactura.clear()
+        a = self.treeFacturas.get_selection()
+        (tm, ti) = a.get_selected()
+        self.curRestaurante.execute("select * from LineasFactura where idFactura = \'" + str(tm.get_value(ti, 0)) + "\'")
+        lineasFactura = self.curRestaurante.fetchall()
 
-    def visualizarServicio(self, widget):  # Metodo que se lanza al clicar en una tupla de la tabla clientes
+        for i in lineasFactura:
+            self.listLineasFactura.append(i)
+
+        self.etIdFactura.set_text(str(tm.get_value(ti, 0)))
+        self.etDni2.set_text(str(tm.get_value(ti, 1)))
+        self.etFecha.set_text(str(tm.get_value(ti, 4)))
+        # self.entnombre.set_text(tm.get_value(ti, 3))
+
+    def visualizarServicio(self, widget):  # Metodo que se lanza al clicar en una tupla de la tabla servicios
         hola = 0
         # self.a = self.treeclientes.get_selection()
         # (tm, ti) = self.a.get_selected()
