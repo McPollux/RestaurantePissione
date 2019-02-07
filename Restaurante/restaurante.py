@@ -436,7 +436,9 @@ class Hola:
         lineasFactura = self.curRestaurante.fetchall()
 
         for i in lineasFactura:
-            self.listLineasFactura.append(i)
+            self.curRestaurante.execute("select nombre, precio from servicios where idServicio = \'" + str(i[2]) + "\'")
+            nombrePrecio = self.curRestaurante.fetchall()
+            self.listLineasFactura.append((i[0], i[3], nombrePrecio[0][0], "%.2f" % (nombrePrecio[0][1]*i[3]) + "€"))
 
         self.etIdFactura.set_text(str(tm.get_value(ti, 0)))
         self.etDni2.set_text(str(tm.get_value(ti, 1)))
