@@ -113,6 +113,11 @@ class Hola:
         self.cmbCamareros = b.get_object("cmbCamareros")
         self.cbCompletado = b.get_object("cbCompletado")
 
+        self.treeServicios = b.get_object("treeServicios")
+        self.treeSelServicio = b.get_object("treeSelServicio")
+        self.etNomServ = b.get_object("etNomServ")
+        self.etPrecioUniServ = b.get_object("etPrecioUniServ")
+
         dic = {'on_PriWin_destroy': self.salir,
                'on_notebook_switch_page': self.verificarCambio,
                'on_btnMesa1_clicked': self.abrirFactura,
@@ -128,6 +133,9 @@ class Hola:
                'on_btnAnhadir_clicked': self.anhadirComanda,
                'on_btnEliminarComanda_clicked': self.eliminarComanda,
                'on_btnImprimir_clicked': self.imprimir,
+               'on_btnBajaFac_clicked': self.bajaFactura,
+               'on_btnAltaServicio_clicked': self.altaServicio,
+               'on_btnBajaServicio_clicked': self.bajaServicio,
                'on_treeSelClientes_changed': self.visualizarCliente,
                'on_treeSelFacturas_changed': self.visualizarComandas,
                'on_treeSelServicio_changed': self.visualizarServicio,
@@ -383,6 +391,33 @@ class Hola:
         self.lblTotal.set_text("0")
         self.treeComandas.get_model().clear()
 
+    def bajaFactura(self, widget):
+        a = self.treeFacturas.get_selection()
+        (tm, ti) = a.get_selected()
+        self.curRestaurante.execute("delete from facturas where idFactura = \'" + str(tm.get_value(ti, 0)) + "\'")
+        self.conexPissione.commit()
+
+        self.listLineasFactura.clear()
+        self.cargarFacturas()
+
+    def altaServicio(self, widget):
+
+        lista = (self.etNomServ.get_text(), self.etPrecioUniServ.get_text())
+
+        self.curRestaurante.execute("insert into servicios (nombre, precio) values (?, ?)", lista)
+        self.conexPissione.commit()
+        self.cargarServicios()
+
+
+    def bajaServicio(self, widget):
+        a = self.treeServicios.get_selection()
+        (tm, ti) = a.get_selected()
+        #Falta codificar que no debe poder borrar ningun servicio ya utilizado en alguna linea de factura
+        self.curRestaurante.execute("delete from servicios where idServicio = \'" + str(tm.get_value(ti, 0)) + "\'")
+        self.conexPissione.commit()
+
+        self.cargarServicios()
+
     def vaciarFactura(self):
         self.etDni.set_text("")
         self.etDireccion.set_text("")
@@ -432,18 +467,19 @@ class Hola:
         self.listLineasFactura.clear()
         a = self.treeFacturas.get_selection()
         (tm, ti) = a.get_selected()
-        self.curRestaurante.execute("select * from LineasFactura where idFactura = \'" + str(tm.get_value(ti, 0)) + "\'")
-        lineasFactura = self.curRestaurante.fetchall()
+        if (ti is not None):
+            self.curRestaurante.execute("select * from LineasFactura where idFactura = \'" + str(tm.get_value(ti, 0)) + "\'")
+            lineasFactura = self.curRestaurante.fetchall()
 
-        for i in lineasFactura:
-            self.curRestaurante.execute("select nombre, precio from servicios where idServicio = \'" + str(i[2]) + "\'")
-            nombrePrecio = self.curRestaurante.fetchall()
-            self.listLineasFactura.append((i[0], i[3], nombrePrecio[0][0], "%.2f" % (nombrePrecio[0][1]*i[3]) + "€"))
+            for i in lineasFactura:
+                self.curRestaurante.execute("select nombre, precio from servicios where idServicio = \'" + str(i[2]) + "\'")
+                nombrePrecio = self.curRestaurante.fetchall()
+                self.listLineasFactura.append((i[0], i[3], nombrePrecio[0][0], "%.2f" % (nombrePrecio[0][1]*i[3]) + "€"))
 
-        self.etIdFactura.set_text(str(tm.get_value(ti, 0)))
-        self.etDni2.set_text(str(tm.get_value(ti, 1)))
-        self.etFecha.set_text(str(tm.get_value(ti, 4)))
-        # self.entnombre.set_text(tm.get_value(ti, 3))
+            self.etIdFactura.set_text(str(tm.get_value(ti, 0)))
+            self.etDni2.set_text(str(tm.get_value(ti, 1)))
+            self.etFecha.set_text(str(tm.get_value(ti, 4)))
+            # self.entnombre.set_text(tm.get_value(ti, 3))
 
     def visualizarServicio(self, widget):  # Metodo que se lanza al clicar en una tupla de la tabla servicios
         hola = 0
