@@ -12,6 +12,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">Imagenes/insert.png</property>
   </object>
+  <object class="GtkImage" id="image11">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">Imagenes/delete.png</property>
+  </object>
   <object class="GtkImage" id="image12">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -21,11 +26,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">Imagenes/update.png</property>
-  </object>
-  <object class="GtkImage" id="image14">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">Imagenes/delete.png</property>
   </object>
   <object class="GtkImage" id="image16">
     <property name="visible">True</property>
@@ -242,7 +242,19 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="listMunicipios2">
+    <columns>
+      <!-- column-name municipios -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="listProvincias">
+    <columns>
+      <!-- column-name provincia -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="listProvincias2">
     <columns>
       <!-- column-name provincia -->
       <column type="gchararray"/>
@@ -896,6 +908,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
                                     <property name="title" translatable="yes">ID Servicio</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="idServicio"/>
@@ -907,6 +920,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
                                     <property name="title" translatable="yes">Precio Un.</property>
                                     <property name="expand">True</property>
                                     <child>
@@ -919,6 +933,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
                                     <property name="title" translatable="yes">Cantidad</property>
                                     <property name="expand">True</property>
                                     <child>
@@ -931,6 +946,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
                                     <property name="title" translatable="yes">Precio Comanda</property>
                                     <property name="expand">True</property>
                                     <child>
@@ -1249,6 +1265,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="resize_mode">queue</property>
+                <signal name="switch-page" handler="on_nbAdministracion_switch_page" swapped="no"/>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
@@ -1256,7 +1273,7 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="height_request">476</property>
+                        <property name="height_request">440</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="margin_left">2</property>
@@ -1366,6 +1383,7 @@
                         <property name="margin_left">130</property>
                         <property name="margin_right">130</property>
                         <property name="margin_top">48</property>
+                        <property name="resize_mode">queue</property>
                         <property name="label_xalign">0</property>
                         <property name="shadow_type">in</property>
                         <child>
@@ -1375,6 +1393,7 @@
                             <property name="halign">center</property>
                             <property name="margin_top">7</property>
                             <property name="margin_bottom">15</property>
+                            <property name="resize_mode">queue</property>
                             <property name="row_spacing">26</property>
                             <property name="column_spacing">12</property>
                             <child>
@@ -1412,11 +1431,10 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="etDniAdm">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_right">60</property>
-                                <property name="editable">False</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1424,7 +1442,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="etNombreAdm">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_right">60</property>
@@ -1435,7 +1453,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="etApellidosAdm">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_right">60</property>
@@ -1457,7 +1475,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="etDireccionAdm">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                               </object>
@@ -1478,16 +1496,6 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -1499,9 +1507,40 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkComboBox" id="cmbProvinciaAdm">
+                                <property name="width_request">166</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="no_show_all">True</property>
+                                <property name="resize_mode">queue</property>
+                                <property name="model">listProvincias2</property>
+                                <property name="wrap_width">1</property>
+                                <signal name="changed" handler="on_cmbProvinciaAdm_changed" swapped="no"/>
+                                <child>
+                                  <object class="GtkCellRendererText"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="cmbCiudadAdm">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="resize_mode">queue</property>
+                                <property name="model">listMunicipios2</property>
+                                <property name="wrap_width">1</property>
+                                <child>
+                                  <object class="GtkCellRendererText"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -1528,16 +1567,20 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="margin_right">15</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">16</property>
                         <property name="hexpand">False</property>
+                        <property name="resize_mode">immediate</property>
                         <property name="spacing">8</property>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkLabel" id="lblErrorClientes">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="image">image10</property>
+                            <property name="can_focus">False</property>
+                            <property name="xpad">70</property>
+                            <property name="justify">center</property>
+                            <attributes>
+                              <attribute name="foreground" value="#cccc00000000"/>
+                            </attributes>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1546,11 +1589,12 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btnAltaCliente">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="image">image13</property>
+                            <property name="image">image10</property>
+                            <signal name="clicked" handler="on_btnAltaCliente_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1559,16 +1603,31 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btnModifCliente">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="image">image14</property>
+                            <property name="image">image13</property>
+                            <signal name="clicked" handler="on_btnModifCliente_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btnBajaCliente">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="image">image11</property>
+                            <signal name="clicked" handler="on_btnBajaCliente_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">3</property>
                           </packing>
                         </child>
                       </object>
@@ -1738,7 +1797,7 @@
                             <property name="shadow_type">in</property>
                             <child>
                               <object class="GtkScrolledWindow">
-                                <property name="height_request">240</property>
+                                <property name="height_request">220</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">3</property>
@@ -1755,9 +1814,14 @@
                                     <property name="margin_top">2</property>
                                     <property name="margin_bottom">2</property>
                                     <property name="model">listLineasFactura</property>
+                                    <property name="headers_clickable">False</property>
+                                    <property name="enable_search">False</property>
                                     <property name="search_column">0</property>
+                                    <property name="show_expanders">False</property>
                                     <child internal-child="selection">
-                                      <object class="GtkTreeSelection"/>
+                                      <object class="GtkTreeSelection" id="treeNoFuncional">
+                                        <signal name="changed" handler="on_treeNoFuncional_changed" swapped="no"/>
+                                      </object>
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn">
@@ -2029,7 +2093,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="margin_right">15</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">16</property>
                         <property name="hexpand">False</property>
                         <property name="spacing">8</property>
@@ -2234,11 +2298,27 @@
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">end</property>
+                        <property name="halign">center</property>
                         <property name="margin_right">15</property>
                         <property name="margin_top">16</property>
                         <property name="hexpand">False</property>
                         <property name="spacing">8</property>
+                        <child>
+                          <object class="GtkLabel" id="lblErrorServ">
+                            <property name="width_request">590</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">100</property>
+                            <attributes>
+                              <attribute name="foreground" value="#cccc00000000"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
                         <child>
                           <object class="GtkButton" id="btnAltaServicio">
                             <property name="visible">True</property>
