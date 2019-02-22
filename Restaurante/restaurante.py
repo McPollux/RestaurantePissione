@@ -153,6 +153,7 @@ class Hola:
                'on_btnAltaCliente_clicked': self.altaCliente,
                'on_btnModifCliente_clicked': self.modifCliente,
                'on_btnBajaCliente_clicked': self.bajaCliente,
+               'on_btnPrint_clicked': self.printPDF,
                'on_btnBajaFac_clicked': self.bajaFactura,
                'on_btnAltaServicio_clicked': self.altaServicio,
                'on_btnBajaServicio_clicked': self.bajaServicio,
@@ -498,6 +499,11 @@ class Hola:
 
         self.listLineasFactura.clear()
         self.cargarFacturas()
+
+    def printPDF(self, widget):
+        a = self.treeFacturas.get_selection()
+        (tm, ti) = a.get_selected()
+        factura(tm.get_value(ti, 0))
 
     def altaServicio(self, widget):
 

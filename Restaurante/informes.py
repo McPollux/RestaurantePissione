@@ -26,14 +26,14 @@ def cabecera():
         cser.setTitle('Informes')
         cser.setAuthor('Pissione')
         cser.setFont('Helvetica', size=11)
-        cser.line(50, 820, 525, 820)
-        cser.line(50, 745, 525, 745)
+        cser.line(25, 390, 525, 390)
+        cser.line(25, 370, 525, 370)
         textnom = 'RESTAURANTE PISSIONE'
         textdir = 'Avenida Galicia, 102 - Vigo'
-        texttlfo = '886 20 21 2'
-        cser.drawString(255, 795, textnom)
-        cser.drawString(245, 775, textdir)
-        cser.drawString(280, 755, texttlfo)
+        texttlfo = '886 20 21 22'
+        cser.drawString(80, 350, textnom)
+        cser.drawString(135, 320, textdir)
+        cser.drawString(205, 300, texttlfo)
     except:
         print ('erros cabecera')
 
@@ -45,9 +45,9 @@ def pie():
 
     """
     try:
-        cser.line(50, 20, 525, 20)
+        cser.line(25, 20, 525, 20)
         textgracias = "Gracias por su visita"
-        cser.drawString(220, 10, textgracias)
+        cser.drawString(175, 10, textgracias)
 
     except:
         print('erros pie')
@@ -72,52 +72,60 @@ def factura(idfactura):
     # le conectamos el cursor
     except sqlite3.OperationalError as e:
         print(e)
-
+    cser.setDash(6,3)
     cabecera()
     pie()
     curRestaurante.execute(
-        'select idComanda, s.nombre, cantidad, s.precio from LineasFactura lf, servicios s where lf.idFactura = ? and s.idServicio = lf.idServicio',
+        'select cantidad, s.nombre, s.precio from LineasFactura lf, servicios s where lf.idFactura = ? and s.idServicio = lf.idServicio',
         (idfactura,))
     listado = curRestaurante.fetchall()
-    print(len(listado))
 
     conexPissione.commit()
     textlistado = 'Factura'
-    cser.drawString(255, 705, textlistado)
-    cser.line(50, 700, 525, 700)
-    x = 50
-    y = 680
+    cser.drawString(25, 705, textlistado)
+    cser.line(25, 700, 525, 700)
+    x = 25
+    y = 240
     total = 0
+
+    cser.drawString(x, y, "Uds.")
+    x = x + 25
+    cser.drawString(x, y, "Nombre del servicio")
+    x = x + 110
+    cser.drawString(x, y, "Precio Ud.")
+    x = x + 70
+    cser.drawString(x, y, "Subtotal")
+
+    x = 25
+    y = y -30
+
     for registro in listado:
-        for i in range(4):
+        for i in range(3):
             if i <= 1:
                 cser.drawString(x, y, str(registro[i]))
-                x = x + 40
-            else:
-                x = x + 120
-                cser.drawString(x, y, str(registro[i]))
-            print(registro[0])
-            print(registro[1])
-            print(registro[2])
-            var1 = int(registro[2])
-            print(registro[3])
-            var2 = round(float(registro[3]), 2)
+                x = x + 25
+            elif i == 2:
+                x = x + 90
+                cser.drawString(x, y, ("%.2f" % registro[i]) + "€")
+
+            var1 = int(registro[0])
+
+            var2 = round(float(registro[2]), 2)
             subtotal = var1 * var2
+
         total = total + subtotal
-        subtotal = locale.currency(subtotal)
-        x = x + 120
+        subtotal = ("%.2f" % subtotal) + "€"
+        x = x + 70
         cser.drawString(x, y, str(subtotal))
         y = y - 20
-        x = 50
+        x = 25
     y = y - 20
-    cser.line(50, y, 525, y)
+    cser.line(25, y, 350, y)
     y = y - 20
-    x = 400
-    cser.drawString(x, y, 'Total: ')
-    x = 485
-    total = round(float(total), 2)
-    total = locale.currency(total)
-    print(total)
+    x = 210
+    cser.drawString(x, y, 'Total:')
+    x = 240
+    total = ("%.2f" % total) + "€"
     cser.drawString(x, y, str(total))
     cser.showPage()
     cser.save()
