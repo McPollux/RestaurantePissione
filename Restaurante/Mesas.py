@@ -1,6 +1,6 @@
 class Mesas:
-
-  def __init__(self, dni, nombre, apellidos, direccion, provincia, ciudad, total):
+  def __init__(self, dni="", nombre="", apellidos="", direccion="", provincia=-1, ciudad=-1,
+               total=0):
     self.dni = dni
     self.nombre = nombre
     self.apellidos = apellidos

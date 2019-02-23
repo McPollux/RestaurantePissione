@@ -3,15 +3,12 @@ from reportlab.lib.pagesizes import A6
 import os
 import locale
 import sqlite3
-
+from Restaurante.restaurante import piss
 
 """ Modulo generardor de documentos
 
 """
-
-
 cser = canvas.Canvas('servicios.pdf', pagesize=A6)
-
 
 def cabecera():
     """ Crea la cabecera del documento
@@ -21,9 +18,7 @@ def cabecera():
 
     """
     try:
-
-
-        cser.setTitle('Informes')
+        cser.setTitle('Factura')
         cser.setAuthor('Pissione')
         cser.setFont('Helvetica', size=11)
         cser.line(25, 390, 525, 390)
@@ -35,7 +30,7 @@ def cabecera():
         cser.drawString(135, 320, textdir)
         cser.drawString(205, 300, texttlfo)
     except:
-        print ('erros cabecera')
+        print ('Error de cabecera')
 
 def pie():
     """ Crea el pie del documento
@@ -50,7 +45,7 @@ def pie():
         cser.drawString(175, 10, textgracias)
 
     except:
-        print('erros pie')
+        print('Error de pie')
 
 
 def factura(idfactura):
@@ -62,25 +57,15 @@ def factura(idfactura):
         los totales y subtotales. Hay ajustes para una mejor alineacion de la presentacion
 
     """
-
-    try:
-        bbdd = 'pissione.sqlite'  # variable almacena base de datos
-        conexPissione = sqlite3.connect(bbdd)
-        curRestaurante = conexPissione.cursor()
-        curRestaurante.execute("PRAGMA foreign_keys = ON")
-        conexPissione.commit()
-    # le conectamos el cursor
-    except sqlite3.OperationalError as e:
-        print(e)
     cser.setDash(6,3)
     cabecera()
     pie()
-    curRestaurante.execute(
+    piss.curRestaurante.execute(
         'select cantidad, s.nombre, s.precio from LineasFactura lf, servicios s where lf.idFactura = ? and s.idServicio = lf.idServicio',
         (idfactura,))
-    listado = curRestaurante.fetchall()
+    listado = piss.curRestaurante.fetchall()
 
-    conexPissione.commit()
+    piss.conexPissione.commit()
     textlistado = 'Factura'
     cser.drawString(25, 705, textlistado)
     cser.line(25, 700, 525, 700)
