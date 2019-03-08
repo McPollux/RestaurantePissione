@@ -10,7 +10,6 @@ from Restaurante.gestion_facturas import *
 from Restaurante.gestion_clientes import altaCliente, modifCliente, bajaCliente, visualizarCliente
 from Restaurante.gestion_servicios import altaServicio, bajaServicio
 
-
 class Hola:
 
     def __init__(self):
