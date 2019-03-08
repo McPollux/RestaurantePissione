@@ -1,7 +1,8 @@
+import gi
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk
-from Restaurante import Mesas
+from Restaurante.Mesas import Mesas
 
 import datetime
 import sqlite3
@@ -30,6 +31,14 @@ class piss:
     notebook = b.get_object("notebook")
     priWin = b.get_object("PriWin")
 
+    # Login
+    gbLogin = b.get_object("gbLogin")
+    etUsuario = b.get_object("etUsuario")
+    etContrasenha = b.get_object("etContrasenha")
+    lblErrorLogin = b.get_object("lblErrorLogin")
+    btnEntrar = b.get_object("btnEntrar")
+    camarero = "Jordi Auxiliar"
+
     # Mesas
     venprincipal = b.get_object("PriWin")
     btnMesa1 = b.get_object("btnMesa1")
@@ -40,6 +49,32 @@ class piss:
     btnMesa6 = b.get_object("btnMesa6")
     btnMesa7 = b.get_object("btnMesa7")
     btnMesa8 = b.get_object("btnMesa8")
+    mesaAzul = -1
+
+    verdeMesa1 = b.get_object("verdeMesa1")
+    azulMesa1 = b.get_object("azulMesa1")
+    rojoMesa1 = b.get_object("rojoMesa1")
+    verdeMesa2 = b.get_object("verdeMesa2")
+    azulMesa2 = b.get_object("azulMesa2")
+    rojoMesa2 = b.get_object("rojoMesa2")
+    verdeMesa3 = b.get_object("verdeMesa3")
+    azulMesa3 = b.get_object("azulMesa3")
+    rojoMesa3 = b.get_object("rojoMesa3")
+    verdeMesa4 = b.get_object("verdeMesa4")
+    azulMesa4 = b.get_object("azulMesa4")
+    rojoMesa4 = b.get_object("rojoMesa4")
+    verdeMesa5 = b.get_object("verdeMesa5")
+    azulMesa5 = b.get_object("azulMesa5")
+    rojoMesa5 = b.get_object("rojoMesa5")
+    verdeMesa6 = b.get_object("verdeMesa6")
+    azulMesa6 = b.get_object("azulMesa6")
+    rojoMesa6 = b.get_object("rojoMesa6")
+    verdeMesa7 = b.get_object("verdeMesa7")
+    azulMesa7 = b.get_object("azulMesa7")
+    rojoMesa7 = b.get_object("rojoMesa7")
+    verdeMesa8 = b.get_object("verdeMesa8")
+    azulMesa8 = b.get_object("azulMesa8")
+    rojoMesa8 = b.get_object("rojoMesa8")
 
     listComandas1 = b.get_object("listComandas1")
     listComandas2 = b.get_object("listComandas2")
@@ -104,7 +139,7 @@ class piss:
     lblErrorClientes = b.get_object("lblErrorClientes")
 
     etIdFactura = b.get_object("etIdFactura")
-    eDni2 = b.get_object("etDni2")
+    etDni2 = b.get_object("etDni2")
     etFecha = b.get_object("etFecha")
 
     treeServicios = b.get_object("treeServicios")
@@ -113,3 +148,4 @@ class piss:
     etPrecioUniServ = b.get_object("etPrecioUniServ")
     lblErrorServ = b.get_object("lblErrorServ")
 
+#EOF

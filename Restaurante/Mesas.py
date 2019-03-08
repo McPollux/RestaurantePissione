@@ -8,3 +8,5 @@ class Mesas:
     self.provincia = provincia
     self.ciudad = ciudad
     self.total = total
+
+#EOF

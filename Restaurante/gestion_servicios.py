@@ -1,8 +1,11 @@
 #from Restaurante.declaraciones import piss import --- Redundante ya que ya es importando en Restaurante.cargas
 from Restaurante.cargas import *
 
-def altaServicio(data, widget):
 
+def altaServicio(widget):
+    """
+     Evento que se lanza al darle al boton correspondiente en la interfaz, realiza el alta y limpia los campos.
+    """
     if piss.etNomServ.get_text() != "":
         if piss.etPrecioUniServ.get_text().replace('.', '', 1).isdigit():
             lista = (piss.etNomServ.get_text(), piss.etPrecioUniServ.get_text())
@@ -20,7 +23,11 @@ def altaServicio(data, widget):
         piss.lblErrorServ.set_text("El nombre no puede estar vacio")
 
 
-def bajaServicio(data, widget):
+def bajaServicio(widget):
+    """
+     Evento que borra un servicio al darle al boton correspondiente en la interfaz, solo realizará esta tarea en caso
+     de que dicho servicio no esté ya asociado a alguna factura.
+    """
     a = piss.treeServicios.get_selection()
     (tm, ti) = a.get_selected()
 

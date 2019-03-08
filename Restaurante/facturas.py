@@ -1,16 +1,14 @@
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A6
 import os
-import locale
-import sqlite3
 from Restaurante.restaurante import piss
 
 """ Modulo generardor de documentos
 
 """
-cser = canvas.Canvas('servicios.pdf', pagesize=A6)
 
-def cabecera():
+
+def cabecera(cser):
     """ Crea la cabecera del documento
 
         Esta cabecera mostrara los datos principales de la empresa
@@ -21,18 +19,19 @@ def cabecera():
         cser.setTitle('Factura')
         cser.setAuthor('Pissione')
         cser.setFont('Helvetica', size=11)
-        cser.line(25, 390, 525, 390)
-        cser.line(25, 370, 525, 370)
+        cser.line(25, 390, 275, 390)
         textnom = 'RESTAURANTE PISSIONE'
         textdir = 'Avenida Galicia, 102 - Vigo'
         texttlfo = '886 20 21 22'
-        cser.drawString(80, 350, textnom)
-        cser.drawString(135, 320, textdir)
-        cser.drawString(205, 300, texttlfo)
+        cser.drawString(80, 370, textnom)
+        cser.line(25, 355, 275, 355)
+        cser.drawString(140, 335, textdir)
+        cser.drawString(208, 320, texttlfo)
     except:
         print ('Error de cabecera')
 
-def pie():
+
+def pie(cser):
     """ Crea el pie del documento
 
         El pie mostrará el agradecimiento al cliente
@@ -40,7 +39,7 @@ def pie():
 
     """
     try:
-        cser.line(25, 20, 525, 20)
+        cser.line(25, 20, 275, 20)
         textgracias = "Gracias por su visita"
         cser.drawString(175, 10, textgracias)
 
@@ -57,22 +56,30 @@ def factura(idfactura):
         los totales y subtotales. Hay ajustes para una mejor alineacion de la presentacion
 
     """
-    cser.setDash(6,3)
-    cabecera()
-    pie()
+
+    cser = canvas.Canvas('servicios.pdf', pagesize=A6)
+    cser.setDash(7, 2)
+    cabecera(cser)
+    pie(cser)
     piss.curRestaurante.execute(
-        'select cantidad, s.nombre, s.precio from LineasFactura lf, servicios s where lf.idFactura = ? and s.idServicio = lf.idServicio',
+        'select cantidad, s.nombre, s.precio, c.nombre, cl.dni, cl.nombre from LineasFactura lf, servicios s, facturas f, camareros c, clientes cl where f.idFactura = ? and lf.idFactura = f.idFactura and s.idServicio = lf.idServicio and f.idcamarero = c.idCamarero and cl.dni= f.dni',
         (idfactura,))
     listado = piss.curRestaurante.fetchall()
 
     piss.conexPissione.commit()
     textlistado = 'Factura'
-    cser.drawString(25, 705, textlistado)
+    cser.drawString(25, 395, textlistado)
     cser.line(25, 700, 525, 700)
     x = 25
     y = 240
     total = 0
-
+    if listado[0][4] != "0":        #En caso de ser un cliente anonimo no se visualiza el campo DNI
+        cser.drawString(25, 300, "Cliente: " + listado[0][5])
+        cser.drawString(25, 285, "DNI: " + listado[0][4])
+    else:
+        cser.drawString(25, 285, "Cliente: " + listado[0][5])
+    cser.drawString(25, 270, "Ha sido atendido por: "+listado[0][3])
+    cser.line(25, 260, 275, 260)
     cser.drawString(x, y, "Uds.")
     x = x + 25
     cser.drawString(x, y, "Nombre del servicio")
@@ -80,9 +87,9 @@ def factura(idfactura):
     cser.drawString(x, y, "Precio Ud.")
     x = x + 70
     cser.drawString(x, y, "Subtotal")
-
+    cser.line(25, 230, 275, 230)
     x = 25
-    y = y -30
+    y = y - 30
 
     for registro in listado:
         for i in range(3):
@@ -104,15 +111,19 @@ def factura(idfactura):
         cser.drawString(x, y, str(subtotal))
         y = y - 20
         x = 25
+
     y = y - 20
-    cser.line(25, y, 350, y)
+    cser.line(25, y, 275, y)
     y = y - 20
     x = 210
     cser.drawString(x, y, 'Total:')
     x = 240
     total = ("%.2f" % total) + "€"
     cser.drawString(x, y, str(total))
-    cser.showPage()
-    cser.save()
-    dir = os.getcwd()
-    os.system('/usr/bin/xdg-open ' + dir + '/servicios.pdf')
+    try:
+        cser.showPage()
+        cser.save()
+        dir = os.getcwd()
+        os.system('/usr/bin/xdg-open ' + dir + '/servicios.pdf')
+    except Exception as e:
+        print(e)
